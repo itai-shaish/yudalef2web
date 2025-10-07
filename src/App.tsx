@@ -28,7 +28,7 @@ export default function App() {
 
   const birthdays = [
     { id: "b1", name: "Noa", month: 10, day: 7, emoji: "🎉" },
-    { id: "b2", name: "Yonatan", month: 10, day: 21 },
+    { id: "b2", name: "ori", month: 10, day: 21 },
     { id: "b3", name: "Maya", month: 11, day: 2, emoji: "🎂" },
   ];
 
