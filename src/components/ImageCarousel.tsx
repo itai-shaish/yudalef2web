@@ -27,7 +27,7 @@ export default function ImageCarousel({ images }: { images: ImageItem[] }) {
           alt={images[index].caption || `Slide ${index + 1}`}
           style={{
             width: "100%",
-            maxHeight: 350,
+            maxHeight: 600,
             objectFit: "cover",
             borderRadius: 12,
             transition: "opacity 0.5s ease",

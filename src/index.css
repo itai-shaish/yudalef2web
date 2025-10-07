@@ -1,67 +1,146 @@
-/* ===== Reset ===== */
+/* ========= Reset ========= */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body, #root { height: 100%; }
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  color: #222;
+:root { color-scheme: light dark; }
+
+/* ========= Tokens ========= */
+:root{
+  --font: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+
+  /* light */
+  --bg: #f7f8fb;
+  --text: #0f172a;
+  --muted: #5b6477;
+
+  --card: rgba(255,255,255,.78);
+  --card-border: rgba(15,23,42,.10);
+  --shadow: 0 12px 30px rgba(2,8,23,.10);
+
+  --brand: #3451ff;
+  --brand-2: #21c2ff;
+  --brand-3: #7c4dff;
+
+  --radius: 14px;
+}
+
+:root[data-theme="dark"]{
+  --bg: #0b1020;
+  --text: #e7eaf3;
+  --muted: #9aa3b3;
+
+  --card: rgba(16,20,35,.55);
+  --card-border: rgba(255,255,255,.14);
+  --shadow: 0 20px 40px rgba(0,0,0,.45);
+}
+
+/* ========= Base ========= */
+body{
+  font-family: var(--font);
+  color: var(--text);
+  background:
+    /* tiny dotted texture */
+    radial-gradient(circle at 1px 1px, rgba(0,0,0,.06) 1px, transparent 1.5px) 0 0/18px 18px,
+    linear-gradient(to bottom, var(--bg), var(--bg));
   overflow-x: hidden;
 }
 
-/* ===== Layout ===== */
-.container {
-  width: min(100%, 1100px);
-  margin: 0 auto;
-  padding: 24px;
+.container{ width: min(100%, 1100px); margin: 0 auto; padding: 24px; }
+
+/* ========= Header with soft “smudges” ========= */
+.header{
+  position: sticky; top: 0; z-index: 50;
+  border-bottom: 1px solid var(--card-border);
+  backdrop-filter: blur(8px);
+  /* layered gradients: base + soft blobs */
+  background:
+    radial-gradient(800px 200px at 20% -20%, color-mix(in oklab, var(--brand) 16%, transparent), transparent 60%),
+    radial-gradient(700px 220px at 80% -30%, color-mix(in oklab, var(--brand-2) 18%, transparent), transparent 60%),
+    radial-gradient(600px 200px at 60% -35%, color-mix(in oklab, var(--brand-3) 14%, transparent), transparent 65%),
+    color-mix(in oklab, var(--card) 80%, transparent);
 }
 
-.header {
-  position: sticky;
-  top: 0;
-  background: white;
-  border-bottom: 1px solid #ddd;
-  padding: 10px 20px;
-  z-index: 100;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.header-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; }
+
+.brand{
+  display:flex; align-items:center; gap:10px;
+  font-weight:800; letter-spacing:.2px; font-size:22px;
+}
+.brand-dot{
+  width:12px; height:12px; border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, var(--brand-2), var(--brand));
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--brand) 18%, transparent);
 }
 
-.title {
-  text-align: center;
-  font-size: 28px;
-  margin: 40px 0 20px;
+/* ========= Title ========= */
+.title{
+  text-align:center;
+  font-size: clamp(26px, 3.2vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 34px 0 22px;
 }
 
-/* ===== Cards Layout ===== */
-.fixed-cards {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap; /* allows wrapping on small screens */
+/* ========= Cards row (responsive flex) ========= */
+.fixed-cards{
+  display:flex; gap:20px; flex-wrap:wrap; /* wrap on small screens */
 }
 
-.card {
-  flex: 1;
-  min-width: 280px; /* ensures they wrap on phones */
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 10px;
+.card{
+  flex:1 1 320px;           /* 3 on desktop, stack on phones */
+  min-width: 280px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
   padding: 16px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.card:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(2,8,23,.12);
+  border-color: color-mix(in oklab, var(--brand) 25%, var(--card-border));
 }
 
-/* ===== Responsive (mobile) ===== */
-@media (max-width: 768px) {
-  .fixed-cards {
-    flex-direction: column;
-  }
+/* ========= Fancy toggle ========= */
+.theme-toggle{
+  --size: 44px;
+  position: relative;
+  inline-size: calc(var(--size) * 1.9);
+  block-size: var(--size);
+  border-radius: calc(var(--size) / 2);
+  background: color-mix(in oklab, var(--card) 88%, transparent);
+  border: 1px solid var(--card-border);
+  display: grid; place-items: center;
+  cursor: pointer;
+  padding: 4px;
+  transition: filter .15s ease, background .2s ease;
+}
+.theme-toggle:hover{ filter: brightness(1.04); }
+
+.theme-toggle input{ appearance:none; width:0; height:0; position:absolute; }
+.theme-toggle .knob{
+  width: calc(var(--size) - 8px); height: calc(var(--size) - 8px);
+  border-radius: 999px;
+  background:
+    radial-gradient(12px 12px at 65% 40%, #ffd36e 40%, transparent 41%) /* sun dot */,
+    linear-gradient(#ffe59a, #ffc857);
+  box-shadow: 0 4px 12px rgba(0,0,0,.18);
+  translate: 0 0;
+  transition: translate .22s cubic-bezier(.22,.9,.25,1), background .22s ease;
+}
+:root[data-theme="dark"] .theme-toggle .knob{
+  background:
+    radial-gradient(16px 16px at 60% 40%, transparent 64%, #9fb7ff 65%) /* crescent */,
+    linear-gradient(#a7b3ff, #6b7cff);
+  translate: calc(100% - 2px) 0;
 }
 
-/* ===== Footer ===== */
-.footer {
-  text-align: center;
-  color: #666;
-  padding: 40px 0;
-  font-size: 14px;
+.toggle-label{
+  margin-inline-start: 10px;
+  color: var(--muted);
+  font-weight: 600;
+  user-select: none;
 }
+
+/* ========= Footer ========= */
+.footer{ text-align:center; color:var(--muted); padding:40px 0; font-size:14px; }
